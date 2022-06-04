@@ -8,7 +8,7 @@ import idautils
 import ida_pro
 import ida_auto
 import ida_nalt
-
+import ida_allins
 
 
 
@@ -65,16 +65,14 @@ def parse_operands(ea, debug:bool) -> List[list]:
         is_write = feature & OPND_WRITE_FLAGS[op.n]
         is_read = feature & OPND_READ_FLAGS[op.n]
 
-
-        
         result.append([op.type,op_id,is_read,is_write])
         
         if debug:
             action = '{}'.format('/'.join(filter(bool, ('read' if is_read else None, 'write' if is_write else None))))
-            stringToPrint = f"Function <{idc.get_func_name(ea)}> Insn <{idc.GetDisasm(ea).split(';')[0]}> Operand[{op.n}] Type [{op.type}] ID[{op_id}] <{idc.print_operand(ea, op.n)}> : {action}"
+            stringToPrint = f"Function <{idc.get_func_name(ea)}> Insn <{idc.GetDisasm(ea).split(';')[0]}> IType [{insn.itype}] Operand[{op.n}] Type [{op.type}] ID[{op_id}] <{idc.print_operand(ea, op.n)}> : {action}"
             print(stringToPrint)
 
-    return result
+    return insn.itype, result
 
 def main(output_dir:str, debug:bool = True) -> None:
     os.makedirs(output_dir, exist_ok=True)
@@ -100,8 +98,8 @@ def main(output_dir:str, debug:bool = True) -> None:
         for insn in idautils.FuncItems(func):
             # print(hex(insn))
             disasm = idc.GetDisasm(insn).split(';')[0]
-            op_info = parse_operands(insn, debug)
-            insn_and_opinfo.append([hex(insn),disasm,op_info])
+            itype, op_info = parse_operands(insn, debug)
+            insn_and_opinfo.append([hex(insn),disasm,itype,op_info])
         end_time = time()
         print('Running for {} seconds.'.format(end_time-start_time))
     
