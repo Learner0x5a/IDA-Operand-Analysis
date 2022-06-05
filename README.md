@@ -1,7 +1,7 @@
 # IDA-Operand-Analysis
 Operand Analysis with IDA Pro: per-operand read/write status, operand type, operand id.
 
-Tested with IDA Pro 7.6 and miasm 7ee593d
+Tested with IDA Pro 7.6
 
 # IDAOpAnalysis.py
 
